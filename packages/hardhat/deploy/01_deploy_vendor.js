@@ -2,7 +2,7 @@
 
 const { ethers } = require("hardhat");
 
-module.exports = async ({ getNamedAccounts, deployments }) => {
+module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
   const chainId = await getChainId();
@@ -27,31 +27,31 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     ethers.utils.parseEther("1000")
   );
 
-  //console.log("\n    ✅ confirming...\n");
-  //await sleep(5000); // wait 5 seconds for transaction to propagate
+  console.log("\n    ✅ confirming...\n");
+  await sleep(5000); // wait 5 seconds for transaction to propagate
 
   // ToDo: change address to your frontend address vvvv
   console.log("\n 🤹  Sending ownership to frontend address...\n");
   const ownershipTransaction = await vendor.transferOwnership(
     "0xf811215cd76c6f510bb3d59b07828f45c0b03b30"
   );
-  // console.log("\n    ✅ confirming...\n");
-  // const ownershipResult = await ownershipTransaction.wait();
+  console.log("\n    ✅ confirming...\n");
+  const ownershipResult = await ownershipTransaction.wait();
 
   // ToDo: Verify your contract with Etherscan for public chains
-  // if (chainId !== "31337") {
-  //   try {
-  //     console.log(" 🎫 Verifing Contract on Etherscan... ");
-  //     await sleep(5000); // wait 5 seconds for deployment to propagate
-  //     await run("verify:verify", {
-  //       address: vendor.address,
-  //       contract: "contracts/Vendor.sol:Vendor",
-  //       contractArguments: [yourToken.address],
-  //     });
-  //   } catch (e) {
-  //     console.log(" ⚠️ Failed to verify contract on Etherscan ");
-  //   }
-  // }
+  if (chainId !== "31337") {
+    try {
+      console.log(" 🎫 Verifing Contract on Etherscan... ");
+      await sleep(5000); // wait 5 seconds for deployment to propagate
+      await run("verify:verify", {
+        address: vendor.address,
+        contract: "contracts/Vendor.sol:Vendor",
+        contractArguments: [yourToken.address],
+      });
+    } catch (e) {
+      console.log(" ⚠️ Failed to verify contract on Etherscan ");
+    }
+  }
 };
 
 function sleep(ms) {
